@@ -12,3 +12,4 @@ npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
 # nft-pay-with-erc20-contracts
+# nft-pay-with-erc20-contracts
