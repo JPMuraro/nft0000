@@ -1,0 +1,10 @@
+{
+  "name": "Muraro NFT #1",
+  "description": "NFT cunhado mediante pagamento em token ERC-20.",
+  "image": "ipfs://REPLACE_IMAGE_CID/1.png",
+  "external_url": "https://example.com/muraro-nft",
+  "attributes": [
+    { "trait_type": "Colecao", "value": "Muraro NFT" },
+    { "trait_type": "Versao", "value": "1" }
+  ]
+}
