@@ -1,17 +1,30 @@
-# NFT Pay with ERC-20 (Smart Contracts)
+# nft-pay-with-erc20-contracts (Hardhat)
 
-DApp: cunhar (mintar) um NFT ERC-721 pagando com um token ERC-20 via fluxo **approve → transferFrom**.
+Projeto da pós: DApp para cunhar (mintar) um NFT (ERC-721) pagando com um token fungível (ERC-20) via fluxo **approve → transferFrom → mint**.
 
-Este repositório contém:
-- `MuraroToken` (ERC-20): somente o owner pode `mintAndTransfer(to, amount)` (cunha e transfere na mesma chamada).
-- `MuraroNFT` (ERC-721): qualquer usuário pode `mint()`, mas deve pagar `price` em ERC-20. O contrato faz `transferFrom` do comprador para o **owner do ERC-721**.
-- `setPrice(newPrice)` apenas pelo owner do ERC-721.
-- `tokenURI(tokenId)` retorna metadados on-chain no formato `data:application/json;base64,...` (padrão OpenSea).
+## Requisitos atendidos (resumo)
+### ERC-20 (MuraroToken)
+- Compatível com padrão ERC-20
+- 18 casas decimais (padrão)
+- Apenas o **owner** pode cunhar e transferir na mesma função: `mintAndTransfer(to, amount)`
 
-## Requisitos
-- Node.js 18+ (recomendado 20+)
+### ERC-721 (MuraroNFT)
+- Compatível com padrão ERC-721
+- `constructor(address tokenAddress, uint256 price)`
+- `price` é variável pública (front lê diretamente)
+- `mint()` pode ser chamado por qualquer usuário e:
+  - exige `approve` prévio no ERC-20
+  - cobra tokens via `transferFrom(msg.sender → owner do ERC-721)`
+- Owner NÃO tem privilégio para mintar: precisa ter saldo e dar approve igual qualquer usuário
+- `setPrice(uint256 newPrice)` apenas owner do ERC-721
+- `tokenURI(uint256 tokenId)` retorna metadados no padrão OpenSea (data URI base64)
+
+## Pré-requisitos
+- Node.js (recomendado LTS)
 - npm
+- Git
 
 ## Instalação
 ```bash
+cd nft-pay-with-erc20-contracts
 npm install
