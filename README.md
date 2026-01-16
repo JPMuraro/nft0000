@@ -1,15 +1,17 @@
-# Sample Hardhat Project
+# NFT Pay with ERC-20 (Smart Contracts)
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+DApp: cunhar (mintar) um NFT ERC-721 pagando com um token ERC-20 via fluxo **approve → transferFrom**.
 
-Try running some of the following tasks:
+Este repositório contém:
+- `MuraroToken` (ERC-20): somente o owner pode `mintAndTransfer(to, amount)` (cunha e transfere na mesma chamada).
+- `MuraroNFT` (ERC-721): qualquer usuário pode `mint()`, mas deve pagar `price` em ERC-20. O contrato faz `transferFrom` do comprador para o **owner do ERC-721**.
+- `setPrice(newPrice)` apenas pelo owner do ERC-721.
+- `tokenURI(tokenId)` retorna metadados on-chain no formato `data:application/json;base64,...` (padrão OpenSea).
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
-# nft-pay-with-erc20-contracts
-# nft-pay-with-erc20-contracts
+## Requisitos
+- Node.js 18+ (recomendado 20+)
+- npm
+
+## Instalação
+```bash
+npm install
