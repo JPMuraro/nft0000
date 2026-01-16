@@ -1,3 +1,7 @@
+// Script Hardhat que recebe `--nft <NFT_ADDR>` e `--tx <TX_HASH>`, busca o receipt da transação,
+// faz o parse dos logs do contrato MuraroNFT e identifica o tokenId cunhado ao localizar o evento
+// ERC-721 `Transfer` com `from` igual ao endereço zero (mint), imprimindo blockNumber e tokenId
+// e, se não encontrar, lista informações básicas dos logs para depuração.
 import { ethers } from "hardhat";
 
 function getArg(flag: string) {
@@ -40,7 +44,6 @@ async function main() {
         }
       }
     } catch {
-      // ignora logs que não batem com a ABI
     }
   }
 

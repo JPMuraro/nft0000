@@ -1,3 +1,9 @@
+// Suíte de testes (Hardhat + Chai) para validar o fluxo “NFT pago com ERC-20”: checa o estado
+// inicial do MuraroNFT (paymentToken/price/owner), garante que `setPrice` é onlyOwner, verifica
+// que o `mint()` exige saldo + `approve` e transfere o valor do comprador para o owner do ERC-721,
+// testa falhas sem approve (inclusive para o owner), valida que `tokenURI()` retorna metadata
+// OpenSea on-chain via `data:application/json;base64,` com imagem SVG embutida, e confirma que
+// o usuário consegue transferir o NFT com `transferFrom`.
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
@@ -44,7 +50,7 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
 
     const newPrice = ethers.parseUnits("15", 18);
 
-    await expect(nft.connect(user).setPrice(newPrice)).to.be.reverted; // onlyOwner
+    await expect(nft.connect(user).setPrice(newPrice)).to.be.reverted;
     await expect(nft.connect(deployer).setPrice(newPrice)).to.not.be.reverted;
 
     expect(await nft.price()).to.eq(newPrice);
@@ -63,16 +69,13 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
     const nft = await Nft.deploy(await token.getAddress(), price);
     await nft.waitForDeployment();
 
-    // buyer recebe tokens (mint feito pelo owner do ERC-20)
     await token.mintAndTransfer(buyer.address, price);
 
-    // approve
     await token.connect(buyer).approve(await nft.getAddress(), price);
 
     const ownerBalBefore = await token.balanceOf(deployer.address);
     const buyerBalBefore = await token.balanceOf(buyer.address);
 
-    // mint
     await expect(nft.connect(buyer).mint()).to.not.be.reverted;
 
     const ownerBalAfter = await token.balanceOf(deployer.address);
@@ -81,7 +84,6 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
     expect(ownerBalAfter - ownerBalBefore).to.eq(price);
     expect(buyerBalBefore - buyerBalAfter).to.eq(price);
 
-    // deve ter cunhado tokenId 1 para buyer
     expect(await nft.ownerOf(1n)).to.eq(buyer.address);
   });
 
@@ -100,7 +102,6 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
 
     await token.mintAndTransfer(buyer.address, price);
 
-    // sem approve
     await expect(nft.connect(buyer).mint()).to.be.reverted;
   });
 
@@ -117,7 +118,6 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
     const nft = await Nft.deploy(await token.getAddress(), price);
     await nft.waitForDeployment();
 
-    // owner (deployer) até pode ter saldo, mas sem approve deve falhar
     await token.mintAndTransfer(deployer.address, price);
 
     await expect(nft.connect(deployer).mint()).to.be.reverted;
@@ -136,11 +136,9 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
     const nft = await Nft.deploy(await token.getAddress(), price);
     await nft.waitForDeployment();
 
-    // buyer recebe tokens e aprova
     await token.mintAndTransfer(buyer.address, price);
     await token.connect(buyer).approve(await nft.getAddress(), price);
 
-    // mint tokenId 1
     await nft.connect(buyer).mint();
 
     const uri = await nft.tokenURI(1n);
@@ -170,7 +168,7 @@ describe("MuraroNFT (ERC-721 pago com ERC-20)", function () {
 
     await token.mintAndTransfer(buyer.address, price);
     await token.connect(buyer).approve(await nft.getAddress(), price);
-    await nft.connect(buyer).mint(); // tokenId 1
+    await nft.connect(buyer).mint();
 
     expect(await nft.ownerOf(1n)).to.eq(buyer.address);
 

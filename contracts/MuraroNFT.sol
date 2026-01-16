@@ -1,4 +1,7 @@
-// SPDX-License-Identifier: MIT
+// Contrato ERC-721 que permite cunhar NFTs mediante pagamento em um ERC-20 (paymentToken):
+// o owner define o `price`, e no `mint()` o usuário paga via `transferFrom` para o owner do NFT,
+// recebendo um tokenId incremental; o `tokenURI()` gera metadata OpenSea on-chain (JSON + SVG)
+// usando Data URI/Base64, sem dependência de servidor externo.
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -25,7 +28,6 @@ contract MuraroNFT is ERC721, Ownable {
     }
 
     function setPrice(uint256 newPrice) external onlyOwner {
-        // Atenção às casas decimais: newPrice deve estar em "unidades" do ERC-20 (18 decimais)
         if (newPrice == 0) revert InvalidPrice();
         price = newPrice;
     }
@@ -34,7 +36,6 @@ contract MuraroNFT is ERC721, Ownable {
         uint256 p = price;
         if (p == 0) revert InvalidPrice();
 
-        // paga para o owner do ERC-721
         bool ok = paymentToken.transferFrom(msg.sender, owner(), p);
         if (!ok) revert PaymentFailed();
 
@@ -42,11 +43,9 @@ contract MuraroNFT is ERC721, Ownable {
         _safeMint(msg.sender, tokenId);
     }
 
-    // OpenSea metadata standard via Data URI (sem IPFS/servidor)
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_ownerOf(tokenId) != address(0), "ERC721: invalid token ID");
 
-        // SVG simples on-chain para não depender de imagem externa
         string memory svg = string.concat(
             "<svg xmlns='http://www.w3.org/2000/svg' width='800' height='800'>",
             "<rect width='100%' height='100%' fill='white'/>",
@@ -62,7 +61,6 @@ contract MuraroNFT is ERC721, Ownable {
             Base64.encode(bytes(svg))
         );
 
-        // JSON padrão OpenSea
         string memory json = string.concat(
             "{",
                 "\"name\":\"Muraro NFT #", tokenId.toString(), "\",",

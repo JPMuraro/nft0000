@@ -1,3 +1,7 @@
+// Script Hardhat que lê TOKEN/TO (e opcionalmente AMOUNT) do ambiente, conecta no contrato
+// MuraroToken com o signer do deployer (owner esperado), converte o valor em unidades usando
+// `decimals()`, executa `mintAndTransfer(to, amountUnits)`, aguarda confirmação e imprime o novo
+// saldo do destinatário formatado com `formatUnits`.
 import { ethers } from "hardhat";
 
 function mustEnv(name: string): string {
@@ -11,7 +15,7 @@ function mustEnv(name: string): string {
 async function main() {
   const tokenAddr = mustEnv("TOKEN");
   const to = mustEnv("TO");
-  const amountStr = (process.env.AMOUNT ?? "100").trim(); // em tokens inteiros, ex: "100"
+  const amountStr = (process.env.AMOUNT ?? "100").trim();
 
   const [deployer] = await ethers.getSigners();
   console.log("Deployer (owner do token, esperado):", deployer.address);

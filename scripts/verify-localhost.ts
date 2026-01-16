@@ -1,3 +1,7 @@
+// Script Hardhat de diagnóstico local: lê `deployments/localhost.json`, extrai os endereços do
+// MuraroToken e MuraroNFT (aceitando variações de chaves), verifica se há bytecode nesses endereços
+// na instância atual do Hardhat (getCode), e se estiver tudo ok, conecta nos contratos e imprime
+// leituras principais (owners, symbol/decimals do ERC-20 e price do ERC-721) para validar o deploy.
 import { ethers } from "hardhat";
 import fs from "fs";
 import path from "path";

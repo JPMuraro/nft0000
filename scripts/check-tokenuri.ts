@@ -1,3 +1,6 @@
+// Script Hardhat que consulta o `tokenURI` de um MuraroNFT já implantado, valida se ele está no
+// formato on-chain `data:application/json;base64,`, decodifica o Base64 para JSON legível e imprime
+// os campos principais (name, description, image e attributes) para inspeção/depuração.
 import { ethers } from "hardhat";
 
 async function main() {
@@ -30,7 +33,10 @@ async function main() {
     console.log("\nCampos principais:");
     console.log("name:", json?.name);
     console.log("description:", json?.description);
-    console.log("image (inicio):", typeof json?.image === "string" ? json.image.slice(0, 80) + "..." : json?.image);
+    console.log(
+      "image (inicio):",
+      typeof json?.image === "string" ? json.image.slice(0, 80) + "..." : json?.image
+    );
     console.log("attributes:", json?.attributes);
   } catch {
     console.log("\nAVISO: JSON não parseou como objeto, mas o conteúdo acima foi impresso.");
